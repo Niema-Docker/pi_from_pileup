@@ -20,7 +20,7 @@ int main(int argc, char* argv[]) {
     if(argc == 3) {
         MIN_DEPTH = stoul(string(argv[2]));
     } else if(argc != 2 || strcmp(argv[1],"-h") == 0 || strcmp(argv[1],"-help") == 0 || strcmp(argv[1],"--help") == 0) {
-        cerr << "USAGE: " << argv[0] << " <input_pileup_file>" << endl; exit(1);
+        cerr << "USAGE: " << argv[0] << " <input_pileup_file> [min_depth=" << DEFAULT_MIN_DEPTH << ']' << endl; exit(1);
     } else {
         MIN_DEPTH = DEFAULT_MIN_DEPTH;
     }
