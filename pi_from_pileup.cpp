@@ -1,4 +1,5 @@
 // Given a pile-up file from samtools mpileup, compute the pi diversity statistic (https://doi.org/10.1093/ve/vey041)
+// Version 1.0.1
 // Compile: g++ -O3 -o pi_from_pileup pi_from_pileup.cpp
 
 // constants
@@ -54,6 +55,13 @@ int main(int argc, char* argv[]) {
     // compute pi statistic
     unsigned long L = 0; // total number of positions
     while(getline(infile,line)) {
+        // clean up to prep for next line
+        n_match = 0;
+        n_mismatch_A = 0;
+        n_mismatch_C = 0;
+        n_mismatch_G = 0;
+        n_mismatch_T = 0;
+
         // parse next line
         istringstream ss(line);
         getline(ss, chrom, '\t');
@@ -61,12 +69,6 @@ int main(int argc, char* argv[]) {
         getline(ss, tmp, '\t'); ref_nuc = tmp[0];
         getline(ss, tmp, '\t'); num_reads = stoul(tmp);
         getline(ss, bases, '\t');
-
-        // check if this position has enough depth
-        if(bases.size() < MIN_DEPTH) {
-            continue;
-        }
-        ++L; // increment number of positions
 
         // count nucleotides at this position
         for(unsigned int i = 0; i < bases.size(); ++i) {
@@ -83,21 +85,23 @@ int main(int argc, char* argv[]) {
                 case 't': ++n_mismatch_T; break;
             }
         }
+        N = n_match + n_mismatch_A + n_mismatch_C + n_mismatch_G + n_mismatch_T;
+
+        // check if this position has enough depth
+        if(N < MIN_DEPTH) {
+            continue;
+        }
+        ++L; // increment number of positions
 
         // compute D_l for this locus l
-        N = n_match + n_mismatch_A + n_mismatch_C + n_mismatch_G + n_mismatch_T;
         N_Nminus1 = N*(N-1);
         D_l = (N_Nminus1 - (n_match*(n_match-1)) - (n_mismatch_A*(n_mismatch_A-1)) - (n_mismatch_C*(n_mismatch_C-1)) - (n_mismatch_G*(n_mismatch_G-1)) - (n_mismatch_T*(n_mismatch_T-1)))/N_Nminus1;
         cout << chrom << '\t' << pos << '\t' << D_l << endl;
         pi += D_l;
-
-        // clean up to prep for next line
-        n_match = 0;
-        n_mismatch_A = 0;
-        n_mismatch_C = 0;
-        n_mismatch_G = 0;
-        n_mismatch_T = 0;
+	cout << N << '\t' << D_l << '\t' << pi << endl;
     }
-    pi /= L;
-    cout << "L then PI\t" << L << '\t' << pi << endl;
+    if(L != 0) {
+        pi /= L;
+        cout << "L then PI\t" << L << '\t' << pi << endl;
+    }
 }
