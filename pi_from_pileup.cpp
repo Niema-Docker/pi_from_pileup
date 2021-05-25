@@ -1,5 +1,5 @@
 // Given a pile-up file from samtools mpileup, compute the pi diversity statistic (https://doi.org/10.1093/ve/vey041)
-// Version 1.0.1
+// Version 1.0.2
 // Compile: g++ -O3 -o pi_from_pileup pi_from_pileup.cpp
 
 // constants
@@ -98,10 +98,17 @@ int main(int argc, char* argv[]) {
         D_l = (N_Nminus1 - (n_match*(n_match-1)) - (n_mismatch_A*(n_mismatch_A-1)) - (n_mismatch_C*(n_mismatch_C-1)) - (n_mismatch_G*(n_mismatch_G-1)) - (n_mismatch_T*(n_mismatch_T-1)))/N_Nminus1;
         cout << chrom << '\t' << pos << '\t' << D_l << endl;
         pi += D_l;
-	cout << N << '\t' << D_l << '\t' << pi << endl;
+        cout << N << '\t' << D_l << '\t' << pi << endl;
     }
-    if(L != 0) {
+
+
+    // output pi
+    cout << "L then PI\t" << L << '\t';
+    if(L == 0) {
+        cout << "0";
+    } else {
         pi /= L;
-        cout << "L then PI\t" << L << '\t' << pi << endl;
+        cout << pi;
     }
+    cout << endl;
 }
