@@ -1,6 +1,6 @@
 // Given a pile-up file from samtools mpileup, compute the pi diversity statistic (https://doi.org/10.1093/ve/vey041)
 // Version 1.0.2
-// Compile: g++ -O3 -o pi_from_pileup pi_from_pileup.cpp
+// Compile: g++ -O3 -std=c++11 -o pi_from_pileup pi_from_pileup.cpp
 
 // constants
 #define DEFAULT_MIN_DEPTH 10
